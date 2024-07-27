@@ -45,7 +45,7 @@ TN,Tennessee,11
 TX,Texas,40
 UT,Utah,6
 VT,Vermont,3
-VI,Virginia,13
+VA,Virginia,13
 WA,Washington,12
 WV,West Virginia,4
 WI,Wisconsin,10,0

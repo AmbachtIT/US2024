@@ -7,15 +7,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Data\States.geo.json" />
     <None Remove="States.txt" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Data\States.geo.json" />
     <EmbeddedResource Include="Data\States.txt" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="33.0.1" />
+    <PackageReference Include="NetTopologySuite" Version="2.5.0" />
+    <PackageReference Include="NetTopologySuite.IO.GeoJSON4STJ" Version="4.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Ambacht.Common\Ambacht.Common.csproj" />
   </ItemGroup>
 
 </Project>
