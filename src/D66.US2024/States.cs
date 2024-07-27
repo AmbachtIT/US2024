@@ -18,7 +18,7 @@ namespace D66.US2024
 		public static IEnumerable<State> Read()
 		{
 			var type = typeof(States);
-			using var stream = type.Assembly.GetManifestResourceStream(type, "States.txt");
+			using var stream = type.Assembly.GetManifestResourceStream(type, "Data.States.txt");
 			using var reader = new StreamReader(stream);
 			using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 

@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="States.txt" />
+    <EmbeddedResource Include="Data\States.txt" />
   </ItemGroup>
 
   <ItemGroup>
