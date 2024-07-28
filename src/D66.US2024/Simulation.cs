@@ -41,7 +41,7 @@ namespace D66.US2024
 			var rounds = 1;
 			var votes = state.ElectoralVotes;
 
-			if (!IsWinnerTakesAll(state))
+			if (!state.IsWinnerTakesAll)
 			{
 				rounds = state.ElectoralVotes;
 				votes = 1;
@@ -84,16 +84,6 @@ namespace D66.US2024
 			Lean.SafeR => 1 - GetTreshold(Lean.SafeD),
 			_ => throw new NotImplementedException()
 		};
-
-		private bool IsWinnerTakesAll(State state)
-		{
-			if (state.Code == "ME" || state.Code == "NE")
-			{
-				return false;
-			}
-
-			return true;
-		}
 
 
 		public class SimulationResult

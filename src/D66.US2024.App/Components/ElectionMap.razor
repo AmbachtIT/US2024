@@ -2,20 +2,20 @@
 @using Ambacht.Common.Maps.Projections
 @using Ambacht.Common.Mathmatics
 
-
 <MudGrid>
-	<MudItem xs="10">
+	<MudItem xs="9">
 		
 		<VectorMap 
 			EnableMousePan="false" 
 			EnableMouseZoom="false" 
 			class="w-full aspect-[3/2] block"
 			@ref="@_map">
-			@foreach (var state in States)
+			@foreach (var state in States.OrderBy(s => s == _selected))
 			{
 				<VectorGeometry 
-					Value="@state.Geometry" 
-					Stroke="black" 
+					Value="@state.Geometry"
+					Stroke="@(_selected == state ? "#222222" : "white")"
+					StrokeWidth="@(_selected == state ? 2 : 1)"
 					Fill="@state.Lean.GetColor()"
 					Tooltip="@state.Name"
 					EnableMouseEvents="@true"
@@ -25,68 +25,72 @@
 
 	</MudItem>
 
-	<MudItem xs="2">
+	<MudItem xs="3">
 		<MudPaper>
+			@if (_selected == null)
+			{
+				<MudText Class="ma-4">Click on a state to display details</MudText>
+			}
+			else
+			{
+				<MudCard>
+					<MudCardHeader>
+						<CardHeaderAvatar>
+							<MudAvatar>@_selected.Code</MudAvatar>
+						</CardHeaderAvatar>
+						<CardHeaderContent>
+							<MudText Typo="Typo.body2">
+								@_selected.Name
+							</MudText>
+						</CardHeaderContent>
+					</MudCardHeader>
+					<MudCardContent>
+						<MudText Class="mb-4">Electoral votes: <strong>@_selected.ElectoralVotes</strong></MudText>
+						@if (_selected.IsWinnerTakesAll)
+						{
+							<MudText>
+								This is a winner-takes all state. All electoral votes go to the candidate that gets the most votes.
+							</MudText>
+						}
+						else
+						{
+							<MudText>
+								This state awards its electoral votes on a per-district basis.
+							</MudText>
 
-			<MudGrid Justify="Justify.Center">
-				<MudItem xs="4" Class="h-4">
-					Dem
-				</MudItem>
-				<MudItem xs="4" Class="h-4">
+						}
 
-				</MudItem>
-				<MudItem xs="4" Class="h-4">
-					Rep
-				</MudItem>
+						<MudSelect T="Lean" Value="@_selected.Lean" ValueChanged="@UpdateLean" Label="State lean" Class="mt-4">
+							<MudSelectItem Value="@Lean.SafeD">Safe Democrat</MudSelectItem>
+							<MudSelectItem Value="@Lean.LikelyD">Likely Democrat</MudSelectItem>
+							<MudSelectItem Value="@Lean.LeansD">Leans Democrat</MudSelectItem>
+							<MudSelectItem Value="@Lean.TossUp">Toss-up</MudSelectItem>
+							<MudSelectItem Value="@Lean.LeansR">Leans Republican</MudSelectItem>
+							<MudSelectItem Value="@Lean.LikelyR">Likely Republican</MudSelectItem>
+							<MudSelectItem Value="@Lean.SafeR">Safe Republican</MudSelectItem>
+						</MudSelect>
 
-				<MudItem xs="4" Class="h-4">
-					<LeanButton Lean="Lean.SafeD" OnClick="@SetActiveLean" Selected="@_activeLean" />
-				</MudItem>
-				<MudItem xs="4" Class="h-4">
-					Safe
-				</MudItem>
-				<MudItem xs="4" Class="h-4">
-					<LeanButton Lean="Lean.SafeR" OnClick="@SetActiveLean" Selected="@_activeLean" />
-				</MudItem>
-
-				<MudItem xs="4" Class="h-4">
-					<LeanButton Lean="Lean.LikelyD" OnClick="@SetActiveLean" Selected="@_activeLean" />
-				</MudItem>
-				<MudItem xs="4" Class="h-4">
-					Likely
-				</MudItem>
-				<MudItem xs="4" Class="h-4">
-					<LeanButton Lean="Lean.LikelyR" OnClick="@SetActiveLean" Selected="@_activeLean" />
-				</MudItem>
-
-				<MudItem xs="4" Class="h-4">
-					<LeanButton Lean="Lean.LeansD" OnClick="@SetActiveLean" Selected="@_activeLean" />
-				</MudItem>
-				<MudItem xs="4" Class="h-4">
-					Lean
-				</MudItem>
-				<MudItem xs="4" Class="h-4">
-					<LeanButton Lean="Lean.LeansR" OnClick="@SetActiveLean" Selected="@_activeLean" />
-				</MudItem>
-
-				<MudItem xs="2" Class="h-4"></MudItem>
-				<MudItem xs="4" Class="h-4">
-					<p>Toss-up</p>
-					<LeanButton Lean="Lean.TossUp" OnClick="@SetActiveLean" Selected="@_activeLean" />
-				</MudItem>
-				<MudItem xs="4" Class="h-4">
-					<p>Cancel</p>
-					<LeanButton Lean="@null" OnClick="@SetActiveLean" Selected="@_activeLean" />
-				</MudItem>
-
-				<MudItem xs="2" Class="h-4"></MudItem>
-
-			</MudGrid>
+					</MudCardContent>
+					<MudCardActions>
+						<MudIconButton Icon="@Icons.Material.Filled.Cancel" OnClick="@(() => _selected = null)" />
+					</MudCardActions>
+				</MudCard>
+			}
 		</MudPaper>
 
 	</MudItem>
 
 </MudGrid>
+
+@if (_progress != null)
+{
+	<MudProgressLinear Min="0" Max="@_rounds" Value="@_progress.Value" />
+}
+
+@if (_result != null)
+{
+	<MudTextField Lines="3" Value="@_result.Summary"></MudTextField>
+}
 
 
 
@@ -96,30 +100,17 @@
 	[Parameter()]
 	public List<State> States { get; set; } = new List<State>();
 
-	[Parameter()]
-	public EventCallback OnUpdated { get; set; }
+	private Simulation.SimulationResult? _result;
+	private double? _progress;
 
+	private int _rounds = 1000;
 	private VectorMap? _map;
+	private State? _selected;
 
 
-
-	private Lean? _activeLean = null;
-
-	private void SetActiveLean(Lean? lean)
+	private void Click(State state)
 	{
-		_activeLean = lean;
-		StateHasChanged();
-	}
-
-	private async Task Click(State state)
-	{
-		if (_activeLean == null)
-		{
-			return;
-		}
-		state.Lean = _activeLean.Value;
-		StateHasChanged();
-		await OnUpdated.InvokeAsync();
+		_selected = state;
 	}
 
 
@@ -130,8 +121,60 @@
 		{
 			var bounds = GetBounds();
 			await _map!.Fit(bounds, true);
+
+			await RunModel();
 		}
 	}
+
+
+	
+
+	private async Task RunModel()
+	{
+		if (_progress != null)
+		{
+			return;
+		}
+
+		_result = null;
+		var sim = new Simulation(19681, States)
+		{
+			Runs = _rounds
+		};
+		var start = DateTime.UtcNow;
+		var count = 0;
+		Simulation.SimulationResult? last = null;
+		_progress = 0;
+		StateHasChanged();
+
+		foreach (var intermediate in sim.Simulate())
+		{
+			var duration = DateTime.UtcNow - start;
+			if (duration > TimeSpan.FromMilliseconds(40))
+			{
+				_progress = count;
+				StateHasChanged();
+				await Task.Delay(TimeSpan.FromMilliseconds(40));
+				start = DateTime.UtcNow;
+			}
+
+			count++;
+			last = intermediate;
+		}
+
+		_result = last;
+		_progress = null;
+		StateHasChanged();
+	}
+
+
+
+	private async Task UpdateLean(Lean lean)
+	{
+		_selected!.Lean = lean;
+		await RunModel();
+	}
+
 
 	private Rectangle<double> GetBounds()
 	{

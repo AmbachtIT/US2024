@@ -13,6 +13,18 @@ namespace D66.US2024
 
 		public required Geometry Geometry { get; set; }
 
+		public bool IsWinnerTakesAll
+		{
+			get
+			{
+				if (Code == "ME" || Code == "NE")
+				{
+					return false;
+				}
+
+				return true;
+			}
+		}
 	}
 
 	public record class StateData

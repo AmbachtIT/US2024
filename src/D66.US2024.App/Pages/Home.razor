@@ -2,77 +2,15 @@
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<MudText Typo="Typo.h1">D66 TAIS Election Model</MudText>
 
-This is an application to model the US elections.
-
-<ElectionMap States="@_states" OnUpdated="@RunModel" />
-@if (_progress != null)
-{
-	<MudProgressLinear Min="0" Max="@_rounds" Value="@_progress.Value" />
-}
-
-@if (_result != null)
-{
-	<MudTextField Lines="3" Value="@_result.Summary"></MudTextField>
-}
+<ElectionMap States="@_states" />
 
 @code
 {
 
 	private List<State> _states = States.ReadData().ToList();
-	private Simulation.SimulationResult? _result;
-	private double? _progress;
-
-	private int _rounds = 1000;
-
-
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		await base.OnAfterRenderAsync(firstRender);
-		if (firstRender)
-		{
-			await RunModel();
-		}
-	}
-
-	private async Task RunModel()
-	{
-		if (_progress != null)
-		{
-			return;
-		}
-
-		_result = null;
-		var sim = new Simulation(19681, _states)
-		{
-			Runs = _rounds
-		};
-		var start = DateTime.UtcNow;
-		var count = 0;
-		Simulation.SimulationResult? last = null;
-		_progress = 0;
-		StateHasChanged();
-
-		foreach (var intermediate in sim.Simulate())
-		{
-			var duration = DateTime.UtcNow - start;
-			if (duration > TimeSpan.FromMilliseconds(40))
-			{
-				_progress = count;
-				StateHasChanged();
-				await Task.Delay(TimeSpan.FromMilliseconds(40));
-				start = DateTime.UtcNow;
-			}
-
-			count++;
-			last = intermediate;
-		}
-
-		_result = last;
-		_progress = null;
-		StateHasChanged();
-	}
+	
 
 
 }
