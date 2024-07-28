@@ -16,7 +16,17 @@ namespace Ambacht.Common.Maps.Projections
 	{
 		public override Vector2<double> Project(LatLng pos)
 		{
-			throw new NotImplementedException();
+			if (pos.Latitude > 50)
+			{
+				return Alaska.Project(pos) + new Vector2<double>(-300, 170);
+			}
+
+			if (pos.Longitude < -130)
+			{
+				return Hawaii.Project(pos) + new Vector2<double>(-200, 170);
+			}
+
+			return Lower48.Project(pos);
 		}
 
 		public override LatLng Invert(Vector2<double> pos)
@@ -26,9 +36,11 @@ namespace Ambacht.Common.Maps.Projections
 
 
 
-		public static Projection Lower48 = new AlbersProjection(new LatLng(38, -98), 29.5, 45.5);
+		public static Projection Lower48 = new AlbersProjection(new LatLng(38, -98), 29.5, 45.5, 1000);
 
-		public static Projection Alaska = new AlbersProjection(new LatLng(60, -160), 55, 65);
+		public static Projection Alaska = new AlbersProjection(new LatLng(60, -160), 55, 65, 330);
+
+		public static Projection Hawaii = new AlbersProjection(new LatLng(20, -160), 8, 18, 1000);
 
 	}
 }

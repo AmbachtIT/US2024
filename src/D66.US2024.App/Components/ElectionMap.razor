@@ -9,7 +9,7 @@
 			EnableMouseZoom="false" 
 		   class="w-full aspect-[3/2] bg-[#bbccee] block"
 		   @ref="@_map">
-	@foreach (var state in Lower48())
+	@foreach (var state in _states)
 	{
 		<VectorGeometry Value="@state.Geometry" Stroke="black" Fill="#eeeeee"/>
 	}
@@ -57,26 +57,14 @@
 		}
 	}
 
-
-	private IEnumerable<StateViewModel> Lower48() => _states.Where(f =>
-	{
-		var id = f.Code;
-		if (id == "AK" || id == "HI")
-		{
-			return false;
-		}
-
-		return true;
-	});
-
 	private Rectangle<double> GetBounds()
 	{
-		var bounds = Lower48().Select(f => f.Geometry).GetBoundingRectangle().ExpandFraction(0.2);
+		var bounds = _states.Select(f => f.Geometry).GetBoundingRectangle().ExpandFraction(0.1);
 		return bounds;
 	}
 
 
-	private static Projection _projection = AlbersUSA.Lower48;
+	private static Projection _projection = new AlbersUSA();
 
 
 }

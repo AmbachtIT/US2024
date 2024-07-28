@@ -14,9 +14,8 @@ namespace Ambacht.Common.Maps.Projections
 	/// <param name="reference"></param>
 	/// <param name="parallel1"></param>
 	/// <param name="parallel2"></param>
-	public class AlbersProjection(LatLng reference, double parallel1, double parallel2) : Projection
+	public class AlbersProjection(LatLng reference, double parallel1, double parallel2, double r) : Projection
 	{
-		private const double R = Earth.Radius / 1000;
 		private double sinLatitude0 = Math.Sin(MathUtil.DegreesToRadians(reference.Latitude));
 		private double sinParallel1 = Math.Sin(MathUtil.DegreesToRadians(parallel1));
 		private double sinParallel2 = Math.Sin(MathUtil.DegreesToRadians(parallel2));
@@ -24,7 +23,7 @@ namespace Ambacht.Common.Maps.Projections
 		private double cosParallel1_2 => cosParallel1 * cosParallel1;
 		private double C => cosParallel1_2 + 2 * n * sinParallel1;
 
-		private double Rho(double sine) => Math.Sqrt(C - 2 * n * sine) * R / n;
+		private double Rho(double sine) => Math.Sqrt(C - 2 * n * sine) * r / n;
 
 		
 		private double n => (sinParallel1 + sinParallel2) / 2;
