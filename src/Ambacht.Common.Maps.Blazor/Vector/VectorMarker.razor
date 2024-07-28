@@ -1,31 +1,16 @@
 ﻿@implements IDisposable
-<VectorElement Center="@_center">
-	<path d="@GetSvgPath()" fill="@Fill" fill-opacity="@Opacity" stroke="@Stroke" stroke-width="@StrokeWidth" style="@Style" onclick="@(() => OnClick.InvokeAsync())" class="@Class" />
+<VectorElement Center="@Center">
+	<circle r="@Radius" fill="@Fill" fill-opacity="@Opacity" stroke="@Stroke" stroke-width="@StrokeWidth" style="@Style" onclick="@(() => OnClick.InvokeAsync())" class="@Class"></circle>
 </VectorElement>
 
 @code {
 
+
+	[Parameter()] 
+    public float Radius { get; set; } = 3;
+
 	[Parameter()]
-	public Geometry Value
-	{
-		get => _value;
-		set
-		{
-			if (_value == value)
-			{
-				return;
-			}
-			_value = value;
-			_cachedSvgPath = null;
-			_center = value?.Centroid.Coordinate;
-
-			_dirty = true;
-			StateHasChanged();
-		}
-	}
-
-	private Geometry _value;
-	private Coordinate _center;
+	public Coordinate Center { get; set; }
 
 	[Parameter()]
 	public string Fill { get; set; } = "#dbdbdb";
@@ -82,11 +67,10 @@
 		get => _view;
 		set
 		{
-			if (_view.Equals(value))
+			if (_view.Scale == value.Scale && _view.Size == value.Size)
 			{
 				return;
 			}
-			_cachedSvgPath = null;
 			_dirty = true;
 			_view = value;
 		}
@@ -100,28 +84,7 @@
 		.Add("pointer-events", "none", !EnableMouseEvents)
 		.Add("cursor", "pointer", EnableMouseEvents)
 		.Build();
-
-	private string GetSvgPath()
-	{
-		if (Value == null || _center == null)
-		{
-			return null;
-		}
-		if (_cachedSvgPath == null)
-		{
-			var newView = View with
-			{
-				Center = _center?.ToVector2() ?? default,
-				Size = new Vector2()
-			};
-			Console.WriteLine($"Calculating cached svg path: " + newView);
-			_cachedSvgPath = Value.GetSvgPath(newView);
-		}
-		return _cachedSvgPath;
-	}
-
-	string _cachedSvgPath = null;
-
+		
 	private bool _dirty = true;
 
 	public void Dispose()

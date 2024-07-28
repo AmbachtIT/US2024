@@ -58,7 +58,8 @@ namespace Ambacht.Common.Maps.Nts
 				}
 
 				builder.Append(' ');
-				builder.WriteSvgCoordinate(view.WorldToScreen(coord));
+				var projected = coord;
+				builder.WriteSvgCoordinate(view.WorldToScreen(projected));
 			}
 
 			return builder.ToString();

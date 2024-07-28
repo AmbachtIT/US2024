@@ -2,7 +2,7 @@
 AL,Alabama,9
 AK,Alaska,3
 AZ,Arizona,11
-AK,Arkansas,6
+AR,Arkansas,6
 CA,California,54
 CO,Colorado,10
 CT,Connecticut,7
@@ -23,7 +23,7 @@ MD,Maryland,10
 MA,Massachusetts,11
 MI,Michigan,15
 MN,Minnesota,10
-MI,Mississippi,6
+MS,Mississippi,6
 MO,Missouri,10
 MT,Montana,4
 NE,Nebraska,5

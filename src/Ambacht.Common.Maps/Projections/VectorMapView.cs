@@ -11,7 +11,7 @@ using NetTopologySuite.Geometries;
 
 namespace Ambacht.Common.Maps.Projections
 {
-	public struct VectorMapView
+	public record struct VectorMapView
 	{
 
 		/// <summary>
@@ -30,6 +30,7 @@ namespace Ambacht.Common.Maps.Projections
 		/// Scale, in pixels per unit
 		/// </summary>
 		public double Scale { get; set; }
+
 
 		public Vector2 WorldToScreen(Coordinate coord)
 		{

@@ -56,7 +56,7 @@
 	{
 		Size = new (600, 600),
 		Center = new (300, 300),
-		Scale = 1
+		Scale = 1,
 	};
 
 	protected override void OnInitialized()
@@ -79,18 +79,18 @@
 		if (_lastSize != size)
 		{
 			_lastSize = size;
+			await SetView(_view with
+			{
+				Size = new Vector2(size.X, size.Y)
+			});
 		}
-
-		await SetView(_view with
-		{
-			Size = new Vector2(size.X, size.Y)
-		});
 	}
 
 	private Vector2 _lastSize = Vector2.Zero;
 
 	private async Task SetView(VectorMapView newView)
 	{
+		Console.WriteLine($"Trying to set view for {newView.Size}");
 		if (newView.Size.X <= 0 || newView.Size.Y <= 0)
 		{
 			return;
@@ -112,22 +112,9 @@
 			return;
 		}
 
+		Console.WriteLine($"Setting view for {newView.Size}. New view: " + newView);
 
-
-		var oldView = _view;
 		_view = newView;
-
-		if (oldView.Center != newView.Center)
-		{
-			//Center = newView.Coords;
-			//await CenterChanged.InvokeAsync(Center);
-		}
-
-		if (oldView.Scale != newView.Scale)
-		{
-			//ZoomAmount = newView.Zoom;
-			//await ZoomAmountChanged.InvokeAsync(ZoomAmount);
-		}
 		await OnViewChanged.InvokeAsync(_view);
 		this.StateHasChanged();
 	}
@@ -204,7 +191,7 @@
 		center -= _view.HalfSize;
 		center += pos;
 		await SetView(_view with
-			{
+				{
 				Coords = SlippyMath.PixelToLatLng(center, _view.Zoom, TileSize),
 				Zoom = newZoomAmount
 			});
@@ -232,6 +219,12 @@
 
 	#region Fit
 
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="bounds">world coordinates</param>
+	/// <param name="keepTracking"></param>
+	/// <returns></returns>
 	public async Task Fit(Rectangle<double> bounds, bool keepTracking)
 	{
 		if (keepTracking)
@@ -244,6 +237,8 @@
 			_deferredFit = bounds;
 			return;
 		}
+
+		Console.WriteLine($"Fitting for window size: " + _view.Size);
 
 		await SetView(_view.Fit(bounds));
 	}

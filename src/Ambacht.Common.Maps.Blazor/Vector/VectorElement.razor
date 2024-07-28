@@ -55,9 +55,10 @@
 
 		if (_transform == null)
 		{
+			var coord = Center;
 			_transform =
 				new SvgTransformBuilder()
-					.Translate(View.WorldToScreen(Center))
+					.Translate(View.WorldToScreen(coord))
 					.Build();
 		}
 
