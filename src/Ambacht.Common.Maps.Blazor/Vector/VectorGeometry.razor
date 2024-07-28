@@ -1,6 +1,11 @@
 ﻿@implements IDisposable
 <VectorElement Center="@_center">
-	<path d="@GetSvgPath()" fill="@Fill" fill-opacity="@Opacity" stroke="@Stroke" stroke-width="@StrokeWidth" style="@Style" onclick="@(() => OnClick.InvokeAsync())" class="@Class" />
+	<path d="@GetSvgPath()" fill="@Fill" fill-opacity="@Opacity" stroke="@Stroke" stroke-width="@StrokeWidth" style="@Style" onclick="@(() => OnClick.InvokeAsync())" class="@Class">
+		@if (Tooltip != null)
+		{
+			<title>@Tooltip</title>
+		}
+	</path>
 </VectorElement>
 
 @code {
@@ -71,6 +76,9 @@
 	}
 
 	private bool _EnableMouseEvents;
+
+	[Parameter()]
+	public string Tooltip { get; set; }
 
 	[Parameter()]
 	public EventCallback OnClick { get; set; }

@@ -1,24 +1,126 @@
-﻿@using Ambacht.Common.Maps
-@using Ambacht.Common.Maps.Nts
+﻿@using Ambacht.Common.Maps.Nts
 @using Ambacht.Common.Maps.Projections
 @using Ambacht.Common.Mathmatics
-@using NetTopologySuite.Features
-@using NetTopologySuite.Geometries
-<VectorMap 
+
+
+<MudGrid>
+	<MudItem xs="10">
+		
+		<VectorMap 
 			EnableMousePan="false" 
 			EnableMouseZoom="false" 
-		   class="w-full aspect-[3/2] block"
-		   @ref="@_map">
-	@foreach (var state in _states)
-	{
-		<VectorGeometry Value="@state.Geometry" Stroke="black" Fill="@state.Lean.GetColor()"/>
-	}
-</VectorMap>
+			class="w-full aspect-[3/2] block"
+			@ref="@_map">
+			@foreach (var state in States)
+			{
+				<VectorGeometry 
+					Value="@state.Geometry" 
+					Stroke="black" 
+					Fill="@state.Lean.GetColor()"
+					Tooltip="@state.Name"
+					EnableMouseEvents="@true"
+					OnClick="@(() => Click(state))"	/>
+			}
+		</VectorMap>
+
+	</MudItem>
+
+	<MudItem xs="2">
+		<MudPaper>
+
+			<MudGrid Justify="Justify.Center">
+				<MudItem xs="4" Class="h-4">
+					Dem
+				</MudItem>
+				<MudItem xs="4" Class="h-4">
+
+				</MudItem>
+				<MudItem xs="4" Class="h-4">
+					Rep
+				</MudItem>
+
+				<MudItem xs="4" Class="h-4">
+					<LeanButton Lean="Lean.SafeD" OnClick="@SetActiveLean" Selected="@_activeLean" />
+				</MudItem>
+				<MudItem xs="4" Class="h-4">
+					Safe
+				</MudItem>
+				<MudItem xs="4" Class="h-4">
+					<LeanButton Lean="Lean.SafeR" OnClick="@SetActiveLean" Selected="@_activeLean" />
+				</MudItem>
+
+				<MudItem xs="4" Class="h-4">
+					<LeanButton Lean="Lean.LikelyD" OnClick="@SetActiveLean" Selected="@_activeLean" />
+				</MudItem>
+				<MudItem xs="4" Class="h-4">
+					Likely
+				</MudItem>
+				<MudItem xs="4" Class="h-4">
+					<LeanButton Lean="Lean.LikelyR" OnClick="@SetActiveLean" Selected="@_activeLean" />
+				</MudItem>
+
+				<MudItem xs="4" Class="h-4">
+					<LeanButton Lean="Lean.LeansD" OnClick="@SetActiveLean" Selected="@_activeLean" />
+				</MudItem>
+				<MudItem xs="4" Class="h-4">
+					Lean
+				</MudItem>
+				<MudItem xs="4" Class="h-4">
+					<LeanButton Lean="Lean.LeansR" OnClick="@SetActiveLean" Selected="@_activeLean" />
+				</MudItem>
+
+				<MudItem xs="2" Class="h-4"></MudItem>
+				<MudItem xs="4" Class="h-4">
+					<p>Toss-up</p>
+					<LeanButton Lean="Lean.TossUp" OnClick="@SetActiveLean" Selected="@_activeLean" />
+				</MudItem>
+				<MudItem xs="4" Class="h-4">
+					<p>Cancel</p>
+					<LeanButton Lean="@null" OnClick="@SetActiveLean" Selected="@_activeLean" />
+				</MudItem>
+
+				<MudItem xs="2" Class="h-4"></MudItem>
+
+			</MudGrid>
+		</MudPaper>
+
+	</MudItem>
+
+</MudGrid>
+
+
 
 @code {
 
-	private VectorMap _map;
-	private List<State> _states = States.ReadData().ToList();
+
+	[Parameter()]
+	public List<State> States { get; set; } = new List<State>();
+
+	[Parameter()]
+	public EventCallback OnUpdated { get; set; }
+
+	private VectorMap? _map;
+
+
+
+	private Lean? _activeLean = null;
+
+	private void SetActiveLean(Lean? lean)
+	{
+		_activeLean = lean;
+		StateHasChanged();
+	}
+
+	private async Task Click(State state)
+	{
+		if (_activeLean == null)
+		{
+			return;
+		}
+		state.Lean = _activeLean.Value;
+		StateHasChanged();
+		await OnUpdated.InvokeAsync();
+	}
 
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -27,13 +129,13 @@
 		if (firstRender)
 		{
 			var bounds = GetBounds();
-			await _map.Fit(bounds, true);
+			await _map!.Fit(bounds, true);
 		}
 	}
 
 	private Rectangle<double> GetBounds()
 	{
-		var bounds = _states.Select(f => f.Geometry).GetBoundingRectangle().ExpandFraction(0.1);
+		var bounds = States.Select(f => f.Geometry).GetBoundingRectangle();
 		return bounds;
 	}
 
