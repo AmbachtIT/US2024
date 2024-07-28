@@ -68,6 +68,15 @@
 		}
 	}
 
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		await base.OnAfterRenderAsync(firstRender);
+		if (firstRender)
+		{
+			await HandleResize();
+		}
+	}
+
 	private async Task HandleResize()
 	{
 		var size = FixedSize ?? await GetSizeService.GetSizeAsync(_container);
@@ -90,7 +99,6 @@
 
 	private async Task SetView(VectorMapView newView)
 	{
-		Console.WriteLine($"Trying to set view for {newView.Size}");
 		if (newView.Size.X <= 0 || newView.Size.Y <= 0)
 		{
 			return;
@@ -111,8 +119,6 @@
 		{
 			return;
 		}
-
-		Console.WriteLine($"Setting view for {newView.Size}. New view: " + newView);
 
 		_view = newView;
 		await OnViewChanged.InvokeAsync(_view);
@@ -237,8 +243,6 @@
 			_deferredFit = bounds;
 			return;
 		}
-
-		Console.WriteLine($"Fitting for window size: " + _view.Size);
 
 		await SetView(_view.Fit(bounds));
 	}

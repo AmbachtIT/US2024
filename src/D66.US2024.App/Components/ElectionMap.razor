@@ -13,10 +13,6 @@
 	{
 		<VectorGeometry Value="@state.Geometry" Stroke="black" Fill="#eeeeee"/>
 	}
-	@foreach (var center in _coordinates)
-	{
-		<VectorMarker Center="@center" />
-	}
 </VectorMap>
 
 @code {
@@ -57,7 +53,6 @@
 		if (firstRender)
 		{
 			var bounds = GetBounds();
-			Console.WriteLine("Fitting bounds: " + bounds.ToString());
 			await _map.Fit(bounds, true);
 		}
 	}
@@ -76,19 +71,10 @@
 
 	private Rectangle<double> GetBounds()
 	{
-		var bounds = Lower48().Select(f => f.Geometry).GetBoundingRectangle();
-
-		_coordinates.Clear();
-		_coordinates.Add(bounds.Center().ToCoordinate());
-		_coordinates.Add(new Coordinate(bounds.Left, bounds.Top));
-		_coordinates.Add(new Coordinate(bounds.Right, bounds.Top));
-		_coordinates.Add(new Coordinate(bounds.Right, bounds.Bottom));
-		_coordinates.Add(new Coordinate(bounds.Left, bounds.Bottom));
-
+		var bounds = Lower48().Select(f => f.Geometry).GetBoundingRectangle().ExpandFraction(0.2);
 		return bounds;
 	}
 
-	private List<Coordinate> _coordinates = new List<Coordinate>();
 
 	private static Projection _projection = AlbersUSA.Lower48;
 

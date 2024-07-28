@@ -114,7 +114,6 @@
 				Center = _center?.ToVector2() ?? default,
 				Size = new Vector2()
 			};
-			Console.WriteLine($"Calculating cached svg path: " + newView);
 			_cachedSvgPath = Value.GetSvgPath(newView);
 		}
 		return _cachedSvgPath;
