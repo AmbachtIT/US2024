@@ -11,7 +11,9 @@ namespace D66.US2024.App
 			builder.RootComponents.Add<App>("#app");
 			builder.RootComponents.Add<HeadOutlet>("head::after");
 
-			builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+			builder.Services.AddUS2024App(builder.HostEnvironment.BaseAddress);
+
+
 
 			await builder.Build().RunAsync();
 		}

@@ -9,6 +9,15 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.5" PrivateAssets="all" />
+    <PackageReference Include="MudBlazor" Version="7.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Ambacht.Common.Blazor\Ambacht.Common.Blazor.csproj" />
+    <ProjectReference Include="..\Ambacht.Common.Maps.Blazor\Ambacht.Common.Maps.Blazor.csproj" />
+    <ProjectReference Include="..\Ambacht.Common.Maps\Ambacht.Common.Maps.csproj" />
+    <ProjectReference Include="..\Ambacht.Common\Ambacht.Common.csproj" />
+    <ProjectReference Include="..\D66.US2024\D66.US2024.csproj" />
   </ItemGroup>
 
 </Project>
