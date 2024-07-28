@@ -1,0 +1,30 @@
+﻿@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url("https://fonts.googleapis.com/css?family=Figtree:300,400,500,700,800&display=swap");
+
+
+.menu-border {
+    border-right: 0.125rem solid #4aa598;
+}
+
+@media screen and (max-width: 600px) {
+    .menu-border {
+        border-right: 0px !important;
+    }
+}
+
+::-webkit-scrollbar {
+    /* Customize the scrollbar width */
+    width: 0.375rem;    
+}
+
+::-webkit-scrollbar-track {
+    /* Customize the scrollbar track */
+    background: #E8E8E8;
+}
+
+::-webkit-scrollbar-thumb {
+    /* Customize the scrollbar thumb */    
+    background: #4AA598;
+}
