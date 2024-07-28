@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Ambacht.Common.Maps\Ambacht.Common.Maps.csproj" />
     <ProjectReference Include="..\Ambacht.Common\Ambacht.Common.csproj" />
   </ItemGroup>
 

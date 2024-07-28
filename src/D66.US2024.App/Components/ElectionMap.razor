@@ -7,45 +7,19 @@
 <VectorMap 
 			EnableMousePan="false" 
 			EnableMouseZoom="false" 
-		   class="w-full aspect-[3/2] bg-[#bbccee] block"
+		   class="w-full aspect-[3/2] block"
 		   @ref="@_map">
 	@foreach (var state in _states)
 	{
-		<VectorGeometry Value="@state.Geometry" Stroke="black" Fill="#eeeeee"/>
+		<VectorGeometry Value="@state.Geometry" Stroke="black" Fill="@state.Lean.GetColor()"/>
 	}
 </VectorMap>
 
 @code {
 
 	private VectorMap _map;
-	private List<StateViewModel> _states = CreateStates().ToList();
+	private List<State> _states = States.ReadData().ToList();
 
-
-	private static IEnumerable<StateViewModel> CreateStates()
-	{
-		var shapes = States.ReadShapes();
-		var data = States.ReadData().ToDictionary(s => s.Code);
-		return shapes
-			.Select(s =>
-			{
-				var id = s.GetOptionalId("id").ToString();
-				var result = new StateViewModel()
-				{
-					Geometry = s.Geometry,
-					Code = data[id].Code,
-					Name = data[id].Name
-				};
-				result.Geometry.Project(_projection);
-				return result;
-			});
-	}
-
-	private class StateViewModel
-	{
-		public string Code { get; set; }
-		public string Name { get; set; }
-		public Geometry Geometry { get; set; }
-	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
