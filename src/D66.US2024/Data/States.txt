@@ -16,7 +16,7 @@ IL,Illinois,19,LikelyD
 IN,Indiana,11,SafeR
 IA,Iowa,6,LikelyR
 KS,Kansas,6,SafeR
-KT,Kentucky,8,SafeR
+KY,Kentucky,8,SafeR
 LA,Louisiana,8,SafeR
 ME,Maine,4,LikelyD
 MD,Maryland,10,SafeD
@@ -33,16 +33,16 @@ NJ,New Jersey,14,LikelyD
 NM,New Mexico,5,LikelyD
 NY,New York,28,SafeD
 NC,North Carolina,16,LeansR
-ND,North Dakota,3,SafeD
+ND,North Dakota,3,SafeR
 OH,Ohio,17,LikelyR
 OK,Oklahoma,7,SafeR
 OR,Oregon,8,LikelyD
 PA,Pennsylvania,19,TossUp
 RI,Rhode Island,4,SafeD
 SC,South Carolina,9,SafeR
-SD,South Dakota,3,SafeD
+SD,South Dakota,3,SafeR
 TN,Tennessee,11,SafeR
-TX,Texas,40,SafeR
+TX,Texas,40,LikelyR
 UT,Utah,6,SafeR
 VT,Vermont,3,SafeD
 VA,Virginia,13,LikelyD
