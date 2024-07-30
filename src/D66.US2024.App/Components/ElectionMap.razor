@@ -154,7 +154,7 @@
 			Text = "white",
 			Background = grouping.Key.GetColor(),
 			Align = grouping.Key.Party().Align,
-			Fraction = (double)grouping.Count() / States.Count,
+			Fraction = (double)grouping.Sum(i => i.ElectoralVotes) / States.Count,
 		};
 	}
 
