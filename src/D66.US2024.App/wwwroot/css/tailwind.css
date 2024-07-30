@@ -606,16 +606,16 @@ video {
   display: table;
 }
 
-.grid {
-  display: grid;
-}
-
 .hidden {
   display: none;
 }
 
 .aspect-\[3\/2\] {
   aspect-ratio: 3/2;
+}
+
+.h-\[50px\] {
+  height: 50px;
 }
 
 .w-full {
@@ -628,10 +628,6 @@ video {
 
 .cursor-pointer {
   cursor: pointer;
-}
-
-.overflow-visible {
-  overflow: visible;
 }
 
 .rounded-md {

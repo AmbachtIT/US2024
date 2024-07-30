@@ -1,36 +1,37 @@
-﻿@using MudBlazor.Utilities
-<div class="w-full" style="@Style()">
+﻿@using System.Globalization
+<svg style="width: 100%; height: 40px;">
 	
+	@{
+		var x = 0.0;
+	}
 	@foreach (var item in Items)
 	{
-		<div class="overflow-visible" style="@item.LabelStyle()">
-			@item.Title
-		</div>
+		<g>
+			<text x="@item.TextX(x)" y="25%" text-anchor="@item.Anchor" dominant-baseline="middle">@item.Title</text>
+			<rect x="@Pct(x)" width="@Pct(item.Fraction)" y="50%" height="50%" fill="@item.BackgroundColor">
+				<title>@item.Title</title>
+			</rect>
+		</g>
+		x += item.Fraction;
 	}
-
+	
+	@{
+		x = 0.0;
+	}
 	@foreach (var item in Items)
 	{
-		<div class="overflow-visible" style="@item.BarStyle()">
-			@item.Value
-		</div>
+		<g>
+			<text x="@Pct(x + item.Fraction * 0.5)" y="75%" fill="@item.TextColor" text-anchor="middle" dominant-baseline="middle">@item.Value</text>
+		</g>
+		x += item.Fraction;
 	}
+</svg>
 
-
-</div>
 
 @code {
 
 	[Parameter()]
 	public List<Item> Items { get; set; } = new List<Item>();
-
-
-	private string Style() =>
-		new StyleBuilder()
-			.AddStyle("display: grid")
-			.AddStyle("grid-template-rows: auto")
-			.AddStyle("grid-template-columns: " + string.Join(" ", Items.Select(i => i.Fraction.ToString("0.0%"))))
-			.ToString();
-
 
 	public record class Item
 	{
@@ -40,27 +41,33 @@
 
 		public double Fraction { get; set; }
 
-		public string Background { get; set; }
+		public string BackgroundColor { get; set; }
 
-		public string Text { get; set; }
+		public string TextColor { get; set; }
 
 		/// <summary>
 		/// Value, to display in the cell
 		/// </summary>
 		public string Value { get; set; }
 
+		public string TextX(double x) => Align switch
+		{
+			"left" => Pct(x),
+			"center" => Pct(x + Fraction * 0.5),
+			"right" => Pct(x + Fraction),
+			_ => throw new NotImplementedException()
+		};
 
-		public string LabelStyle() => 
-			new StyleBuilder()
-				.AddStyle($"text-align: {Align}")
-			.ToString();
+		public string Anchor => Align switch
+		{
+			"left" => "start",
+			"center" => "middle",
+			"right" => "end",
+			_ => throw new NotImplementedException()
+		};
 
-		public string BarStyle() => 
-			new StyleBuilder()
-				.AddStyle($"color: {Text}")
-				.AddStyle($"text-align: center")
-				.AddStyle($"background-color: {Background}")
-				.ToString();
 	}
+
+	private static string Pct(double fraction) => fraction.ToString("0.0%", CultureInfo.InvariantCulture);
 
 }

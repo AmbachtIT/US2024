@@ -151,10 +151,10 @@
 		{
 			Title = GetTitle(grouping.Key),
 			Value = grouping.Count().ToString(),
-			Text = "white",
-			Background = grouping.Key.GetColor(),
+			TextColor = "white",
+			BackgroundColor = grouping.Key.GetColor(),
 			Align = grouping.Key.Party().Align,
-			Fraction = (double)grouping.Sum(i => i.ElectoralVotes) / States.Count,
+			Fraction = (double)grouping.Sum(i => i.ElectoralVotes) / States.Sum(s => s.ElectoralVotes),
 		};
 	}
 
