@@ -23,6 +23,9 @@ namespace D66.US2024
 				result.Runs.Add(SimulateRun());
 				yield return result;
 			}
+
+			result.Finish();
+			yield return result;
 		}
 
 		public RunResult SimulateRun()
@@ -91,21 +94,45 @@ namespace D66.US2024
 			public List<RunResult> Runs { get; set; } = new List<RunResult>();
 
 
+			public List<PartyResult> Parties { get; set; } = new List<PartyResult>();
+
 			public string Summary
 			{
 				get
 				{
 					var builder = new StringBuilder();
-					foreach (var group in Runs.GroupBy(r => r.Winner).OrderByDescending(g => g.Key))
+					foreach (var party in Parties)
 					{
-						var percentage = 100.0 * group.Count() / Runs.Count;
-						builder.AppendLine(group.Key.PadRight(13) + $": {percentage:0.0}%");
+						builder.AppendLine(party.Party.Name.PadRight(13) + $": {party.WinFraction:0.0}%");
 					}
 
 					return builder.ToString();
 				}
 			}
 
+			public void Finish()
+			{
+				foreach (var group in Runs.GroupBy(r => r.Winner).OrderByDescending(g => g.Key.Name))
+				{
+					Parties.Add(new PartyResult()
+					{
+						Party = group.Key,
+						Total = Runs.Count,
+						Wins = group.Count(),
+					});
+				}
+			}
+		}
+
+		public class PartyResult
+		{
+			public Party Party { get; set; }
+			public int Wins { get; set; }
+			public int Losses => Total - Wins;
+
+			public int Total { get; set; }
+
+			public double WinFraction => (double)Wins / Total;
 		}
 
 
@@ -113,7 +140,7 @@ namespace D66.US2024
 		{
 			public List<StateResult> States { get; set; } = new List<StateResult>();
 
-			public string Winner
+			public Party Winner
 			{
 				get
 				{
@@ -121,15 +148,15 @@ namespace D66.US2024
 					var reps = VotesR();
 					if (dems < reps)
 					{
-						return $"Republicans";
+						return Parties.Republicans;
 					}
 
 					if (reps < dems)
 					{
-						return $"Democrats";
+						return Parties.Democrats;
 					}
 
-					return "Tie";
+					return Parties.Tie;
 				}
 			}
 

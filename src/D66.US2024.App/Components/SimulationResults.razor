@@ -1,0 +1,27 @@
+﻿<HorizontalBarChart Items="@ElectoralItems().ToList()" />
+
+@code {
+
+	[Parameter()]
+	public Simulation.SimulationResult Value { get; set; }
+
+
+
+	private IEnumerable<HorizontalBarChart.Item> ElectoralItems()
+	{
+		return Parties.All().Select(party =>
+		{
+			var s = Value.Parties.Single(p => p.Party == party);
+			return new HorizontalBarChart.Item()
+			{
+				Title = party.Name,
+				Background = party.Color,
+				Text = "white",
+				Fraction = s.WinFraction,
+				Value = $"{s.WinFraction:0.0%}",
+				Align = party.Align
+			};
+		});
+	}
+
+}

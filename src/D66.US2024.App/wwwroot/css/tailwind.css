@@ -606,6 +606,10 @@ video {
   display: table;
 }
 
+.grid {
+  display: grid;
+}
+
 .hidden {
   display: none;
 }
@@ -624,6 +628,10 @@ video {
 
 .cursor-pointer {
   cursor: pointer;
+}
+
+.overflow-visible {
+  overflow: visible;
 }
 
 .rounded-md {

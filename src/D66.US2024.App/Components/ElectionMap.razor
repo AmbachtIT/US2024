@@ -2,6 +2,7 @@
 @using Ambacht.Common.Maps.Projections
 @using Ambacht.Common.Mathmatics
 
+<MudText Typo="Typo.h4">Electoral map</MudText>
 <MudGrid>
 	<MudItem xs="9">
 		
@@ -82,6 +83,12 @@
 
 </MudGrid>
 
+<MudText Typo="Typo.h4">Electoral votes</MudText>
+<div class="w-full">
+	<HorizontalBarChart Items="@ElectoralItems().ToList()"  />
+</div>
+
+<MudText Typo="Typo.h4" Class="mt-4">Scenario modeling</MudText>
 @if (_progress != null)
 {
 	<MudProgressLinear Min="0" Max="@_rounds" Value="@_progress.Value" />
@@ -89,7 +96,7 @@
 
 @if (_result != null)
 {
-	<MudTextField Lines="3" Value="@_result.Summary"></MudTextField>
+	<SimulationResults Value="@_result" />
 }
 
 
@@ -126,8 +133,38 @@
 		}
 	}
 
+	private IEnumerable<HorizontalBarChart.Item> ElectoralItems()
+	{
+		var grouped = States.GroupBy(s => s.Lean).ToDictionary(g => g.Key);
+		yield return CreateGroup(grouped[Lean.SafeD]);
+		yield return CreateGroup(grouped[Lean.LikelyD]);
+		yield return CreateGroup(grouped[Lean.LeansD]);
+		yield return CreateGroup(grouped[Lean.TossUp]);
+		yield return CreateGroup(grouped[Lean.LeansR]);
+		yield return CreateGroup(grouped[Lean.LikelyR]);
+		yield return CreateGroup(grouped[Lean.SafeR]);
+	}
 
-	
+	private HorizontalBarChart.Item CreateGroup(IGrouping<Lean, State> grouping)
+	{
+		return new HorizontalBarChart.Item()
+		{
+			Title = GetTitle(grouping.Key),
+			Value = grouping.Count().ToString(),
+			Text = "white",
+			Background = grouping.Key.GetColor(),
+			Align = grouping.Key.Party().Align,
+			Fraction = (double)grouping.Count() / States.Count,
+		};
+	}
+
+	private string? GetTitle(Lean lean) => lean switch
+	{
+		Lean.SafeD => "Democrats",
+		Lean.SafeR => "Republicans",
+		_ => null
+	};
+
 
 	private async Task RunModel()
 	{

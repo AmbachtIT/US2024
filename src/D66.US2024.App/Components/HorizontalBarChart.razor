@@ -1,0 +1,66 @@
+﻿@using MudBlazor.Utilities
+<div class="w-full" style="@Style()">
+	
+	@foreach (var item in Items)
+	{
+		<div class="overflow-visible" style="@item.LabelStyle()">
+			@item.Title
+		</div>
+	}
+
+	@foreach (var item in Items)
+	{
+		<div class="overflow-visible" style="@item.BarStyle()">
+			@item.Value
+		</div>
+	}
+
+
+</div>
+
+@code {
+
+	[Parameter()]
+	public List<Item> Items { get; set; } = new List<Item>();
+
+
+	private string Style() =>
+		new StyleBuilder()
+			.AddStyle("display: grid")
+			.AddStyle("grid-template-rows: auto")
+			.AddStyle("grid-template-columns: " + string.Join(" ", Items.Select(i => i.Fraction.ToString("0.0%"))))
+			.ToString();
+
+
+	public record class Item
+	{
+		public string Title { get; set; }
+
+		public string Align { get; set; }
+
+		public double Fraction { get; set; }
+
+		public string Background { get; set; }
+
+		public string Text { get; set; }
+
+		/// <summary>
+		/// Value, to display in the cell
+		/// </summary>
+		public string Value { get; set; }
+
+
+		public string LabelStyle() => 
+			new StyleBuilder()
+				.AddStyle($"text-align: {Align}")
+			.ToString();
+
+		public string BarStyle() => 
+			new StyleBuilder()
+				.AddStyle($"color: {Text}")
+				.AddStyle($"text-align: center")
+				.AddStyle($"background-color: {Background}")
+				.ToString();
+	}
+
+}
